@@ -1,3 +1,4 @@
+export default function validarCrearCuenta(valores) {
   let errores = {};
 
   // Validar el nombre del usuario
@@ -19,3 +20,5 @@
     errores.password = "El password debe ser de al menos 6 caracteres";
   }
 
+  return errores;
+}
