@@ -9,11 +9,11 @@ import {
   Error,
 } from "../components/ui/Formulario";
 
-//import firebase from "../firebase";
+import firebase from "../firebase";
 
 // validaciones
 import useValidacion from "../hooks/useValidacion";
-import validarCrearCuenta from "../validacion/validarCrearCuenta";
+import validarCrearCuenta from "../validacion/validaciones";
 
 const STATE_INICIAL = {
   nombre: "",
@@ -35,14 +35,13 @@ const CrearCuenta = () => {
   const { nombre, email, password } = valores;
 
   async function crearCuenta() {
-    console.log("Creando...");
-    /*try {
+    try {
       await firebase.registrar(nombre, email, password);
       Router.push("/");
     } catch (error) {
       console.error("Hubo un error al crear el usuario ", error.message);
-      guardarError(error.message);
-    }*/
+      setError(error.message);
+    }
   }
 
   return (
@@ -71,6 +70,8 @@ const CrearCuenta = () => {
               />
             </Campo>
 
+            {errores.nombre && <Error>{errores.nombre}</Error>}
+
             <Campo>
               <label htmlFor="email">Email</label>
               <input
@@ -83,6 +84,7 @@ const CrearCuenta = () => {
                 onBlur={handleBlur}
               />
             </Campo>
+            {errores.email && <Error>{errores.email}</Error>}
 
             <Campo>
               <label htmlFor="password">Password</label>
@@ -96,6 +98,9 @@ const CrearCuenta = () => {
                 onBlur={handleBlur}
               />
             </Campo>
+            {errores.password && <Error>{errores.password}</Error>}
+
+            {error && <Error>{error} </Error>}
 
             <InputSubmit type="submit" value="Crear Cuenta" />
           </Formulario>
