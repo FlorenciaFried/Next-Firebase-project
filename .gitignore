@@ -28,6 +28,4 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
-
-# Ignoro el config.js de firebase
-product-hunt-next-app/firebase/config.js
+/firebase/config.js

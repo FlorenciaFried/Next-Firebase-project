@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import Navegacion from "./Navegacion";
 import Boton from "../ui/Boton";
 import Buscar from "../ui/Buscar";
+import { FirebaseContext } from '../../firebase';
 import Link from "next/link";
 import styled from "@emotion/styled";
 import { css } from "@emotion/core";
@@ -26,7 +27,7 @@ const Logo = styled.a`
 `;
 
 const Header = () => {
-  const usuario = false;
+  const { usuario, firebase } = useContext(FirebaseContext);
 
   return (
     <header
@@ -64,7 +65,7 @@ const Header = () => {
                   margin-right: 2rem;
                 `}
               >
-                Hola: Flor
+                Hola: {usuario.displayName}
               </p>
 
               <Boton bgColor="true">Cerrar Sesión</Boton>
