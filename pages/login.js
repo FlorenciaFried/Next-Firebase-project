@@ -13,7 +13,7 @@ import firebase from "../firebase";
 
 // validaciones
 import useValidacion from "../hooks/useValidacion";
-//import validarIniciarSesion from "../validacion/validarIniciarSesion";
+import validarIniciarSesion from "../validacion/validarIniciarSesion";
 
 const STATE_INICIAL = {
   email: "",
@@ -23,7 +23,7 @@ const STATE_INICIAL = {
 const Login = () => {
   const [error, setError] = useState(false);
 
-  /*const {
+  const {
     valores,
     errores,
     handleSubmit,
@@ -42,7 +42,7 @@ const Login = () => {
       setError(error.message);
     }
   }
-*/
+
   return (
     <div>
       <Layout>

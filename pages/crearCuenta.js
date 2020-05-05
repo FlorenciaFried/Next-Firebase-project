@@ -13,7 +13,7 @@ import firebase from "../firebase";
 
 // validaciones
 import useValidacion from "../hooks/useValidacion";
-import validarCrearCuenta from "../validacion/validaciones";
+import validarCrearCuenta from "../validacion/validarCrearCuenta";
 
 const STATE_INICIAL = {
   nombre: "",

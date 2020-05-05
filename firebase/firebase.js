@@ -8,6 +8,8 @@ class Firebase {
       app.initializeApp(firebaseConfig);
     }
     this.auth = app.auth();
+    this.db = app.firestore();
+    this.storage = app.storage();
   }
 
   // Registra un usuario
@@ -20,6 +22,16 @@ class Firebase {
     return await nuevoUsuario.user.updateProfile({
       displayName: nombre,
     });
+  }
+
+  // Inicia sesión del usuario
+  async login(email, password) {
+    return this.auth.signInWithEmailAndPassword(email, password);
+  }
+
+  // Cierra la sesión del usuario
+  async cerrarSesion() {
+    await this.auth.signOut();
   }
 }
 
