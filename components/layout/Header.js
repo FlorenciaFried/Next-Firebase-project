@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import Navegacion from "./Navegacion";
 import Boton from "../ui/Boton";
 import Buscar from "../ui/Buscar";
-import { FirebaseContext } from '../../firebase';
+import { FirebaseContext } from "../../firebase";
 import Link from "next/link";
 import styled from "@emotion/styled";
 import { css } from "@emotion/core";
@@ -65,10 +65,11 @@ const Header = () => {
                   margin-right: 2rem;
                 `}
               >
-                Hola: {usuario.displayName}
+                Hola: {usuario.displayName}{" "}
               </p>
-
-              <Boton bgColor="true">Cerrar Sesión</Boton>
+              <Boton bgColor="true" onClick={() => firebase.cerrarSesion()}>
+                Cerrar Sesión
+              </Boton>
             </>
           ) : (
             <>

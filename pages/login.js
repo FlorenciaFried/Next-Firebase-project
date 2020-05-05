@@ -21,7 +21,7 @@ const STATE_INICIAL = {
 };
 
 const Login = () => {
-  const [error, setError] = useState(false);
+  const [error, guardarError] = useState(false);
 
   const {
     valores,
@@ -39,7 +39,7 @@ const Login = () => {
       Router.push("/");
     } catch (error) {
       console.error("Hubo un error al autenticar el usuario ", error.message);
-      setError(error.message);
+      guardarError(error.message);
     }
   }
 
@@ -55,7 +55,7 @@ const Login = () => {
           >
             Iniciar Sesión
           </h1>
-          <Formulario >
+          <Formulario onSubmit={handleSubmit} noValidate>
             <Campo>
               <label htmlFor="email">Email</label>
               <input
@@ -63,9 +63,12 @@ const Login = () => {
                 id="email"
                 placeholder="Tu Email"
                 name="email"
-
+                value={email}
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
             </Campo>
+            {errores.email && <Error>{errores.email}</Error>}
 
             <Campo>
               <label htmlFor="password">Password</label>
@@ -74,9 +77,14 @@ const Login = () => {
                 id="password"
                 placeholder="Tu Password"
                 name="password"
-
+                value={password}
+                onChange={handleChange}
+                onBlur={handleBlur}
               />
             </Campo>
+            {errores.password && <Error>{errores.password}</Error>}
+
+            {error && <Error>{error} </Error>}
 
             <InputSubmit type="submit" value="Iniciar Sesión" />
           </Formulario>
