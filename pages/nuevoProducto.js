@@ -12,7 +12,7 @@ import {
 
 import { FirebaseContext } from "../firebase";
 
-//import Error404 from "../components/layout/404";
+import Error404 from "../components/layout/404";
 
 // validaciones
 import useValidacion from "../hooks/useValidacion";
@@ -108,7 +108,9 @@ const NuevoProducto = () => {
   return (
     <div>
       <Layout>
-        {!usuario ? null : (
+        {!usuario ? (
+          <Error404 />
+        ) : (
           <>
             <h1
               css={css`
