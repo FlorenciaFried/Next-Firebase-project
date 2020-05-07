@@ -6,7 +6,6 @@ import firebase, { FirebaseContext } from "../firebase";
 
 const MyApp = (props) => {
   const usuario = useAutenticacion();
-  console.log(usuario);
   
   const { Component, pageProps } = props;
 
