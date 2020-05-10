@@ -87,7 +87,7 @@ const NuevoProducto = () => {
   const handleProgress = (progreso) => guardarProgreso({ progreso });
 
   const handleUploadError = (error) => {
-    guardarSubiendo(error);
+    guardarError(error);
     console.error(error);
   };
 

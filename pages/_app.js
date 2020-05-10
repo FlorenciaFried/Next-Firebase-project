@@ -1,6 +1,4 @@
 import App from "next/app";
-import 'firebase/firestore';
-import 'firebase/storage';
 import useAutenticacion from '../hooks/useAutenticacion';
 import firebase, { FirebaseContext } from "../firebase";
 

@@ -32,6 +32,7 @@ const Producto = () => {
   const [producto, setProducto] = useState({});
   const [error, setError] = useState(false);
   const [comentario, setComentario] = useState({});
+  const [consultarDB, setConsultarDB] = useState(true);
 
   // Routing para obtener el id actual
   const router = useRouter();
@@ -43,19 +44,21 @@ const Producto = () => {
   const { firebase, usuario } = useContext(FirebaseContext);
 
   useEffect(() => {
-    if (id) {
+    if (id && consultarDB) {
       const obtenerProducto = async () => {
         const productoQuery = await firebase.db.collection("productos").doc(id);
         const producto = await productoQuery.get();
         if (producto.exists) {
           setProducto(producto.data());
+          setConsultarDB(false);
         } else {
           setError(true);
+          setConsultarDB(false);
         }
       };
       obtenerProducto();
     }
-  }, [id, producto]);
+  }, [id]);
 
   const {
     comentarios,
@@ -97,6 +100,9 @@ const Producto = () => {
       ...producto,
       votos: nuevoTotal,
     });
+
+    //Hay un voto, por lo tanto consulta BD para actualizar productos
+    setConsultarDB(true);
   };
 
   // Funciones para crear comentarios
@@ -139,115 +145,147 @@ const Producto = () => {
       ...producto,
       comentarios: nuevosComentarios,
     });
+
+    //Hay un nuevo comentario, por lo tanto consulta BD para actualizar productos
+    setConsultarDB(true);
+  };
+
+  // Funcion que revisa que el creador del producto sea el mismo que esta autenticado
+  const puedeBorrar = () => {
+    if (!usuario) return false;
+
+    if (creador.id === usuario.uid) {
+      return true;
+    }
+  };
+
+  // Funcion para eliminar el producto de la BD
+  const eliminarProducto = async () => {
+    if (!usuario || creador.id !== usuario.uid) {
+      return router.push("/login");
+    }
+
+    try {
+      await firebase.db.collection("productos").doc(id).delete();
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
     <Layout>
-      <>{error && <Error404 />}</>
+      {error ? (
+        <Error404 />
+      ) : (
+        <div className="contenedor">
+          <h1
+            css={css`
+              text-align: center;
+              margin-top: 5rem;
+            `}
+          >
+            {nombre}
+          </h1>
 
-      <div className="contenedor">
-        <h1
-          css={css`
-            text-align: center;
-            margin-top: 5rem;
-          `}
-        >
-          {nombre}
-        </h1>
+          <ContenedorProducto>
+            <div>
+              <p>
+                Publicado hace:{" "}
+                {formatDistanceToNow(new Date(creado), { locale: es })}
+              </p>
+              <p>
+                Por {creador.nombre} de {empresa}
+              </p>
+              <img src={urlimagen} />
+              <p>{descripcion}</p>
 
-        <ContenedorProducto>
-          <div>
-            <p>
-              Publicado hace:{" "}
-              {formatDistanceToNow(new Date(creado), { locale: es })}
-            </p>
-            <p>
-              Por {creador.nombre} de {empresa}
-            </p>
-            <img src={urlimagen} />
-            <p>{descripcion}</p>
+              {usuario && (
+                <>
+                  <h2>Agrega tu comentario</h2>
+                  <form onSubmit={agregarComentario}>
+                    <Campo>
+                      <input
+                        onChange={comentarioChange}
+                        type="text"
+                        name="mensaje"
+                      />
+                    </Campo>
 
-            {usuario && (
-              <>
-                <h2>Agrega tu comentario</h2>
-                <form onSubmit={agregarComentario}>
-                  <Campo>
-                    <input
-                      onChange={comentarioChange}
-                      type="text"
-                      name="mensaje"
-                    />
-                  </Campo>
+                    <InputSubmit type="submit" value="Agregar comentario" />
+                  </form>
+                </>
+              )}
 
-                  <InputSubmit type="submit" value="Agregar comentario" />
-                </form>
-              </>
-            )}
-
-            <h2
-              css={css`
-                margin: 2rem 0;
-              `}
-            >
-              Comentarios
-            </h2>
-
-            {comentarios.length === 0 ? (
-              "Aún no hay comentarios"
-            ) : (
-              <ul>
-                {comentarios.map((comentario, i) => (
-                  <li
-                    key={`${comentario.usuarioId}-${i}`}
-                    css={css`
-                      border: 1px solid #e1e1e1;
-                      padding: 2rem;
-                    `}
-                  >
-                    <p>{comentario.mensaje}</p>
-                    <p>
-                      Escrito por:
-                      <span
-                        css={css`
-                          font-weight: bold;
-                        `}
-                      >
-                        {" "}
-                        {comentario.usuarioNombre}
-                      </span>
-                    </p>
-                    {esCreador(comentario.usuarioId) && (
-                      <CreadorProducto>Es Creador</CreadorProducto>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          <aside>
-            <Boton target="_blank" bgColor="true" href={url}>
-              Visitar URL
-            </Boton>
-
-            <div
-              css={css`
-                margin-top: 5rem;
-              `}
-            >
-              <p
+              <h2
                 css={css`
-                  text-align: center;
+                  margin: 2rem 0;
                 `}
               >
-                {votos} Votos
-              </p>
+                Comentarios
+              </h2>
 
-              {usuario && <Boton onClick={votarProducto}>Votar</Boton>}
+              {comentarios.length === 0 ? (
+                "Aún no hay comentarios"
+              ) : (
+                <ul>
+                  {comentarios.map((comentario, i) => (
+                    <li
+                      key={`${comentario.usuarioId}-${i}`}
+                      css={css`
+                        border: 1px solid #e1e1e1;
+                        padding: 2rem;
+                      `}
+                    >
+                      <p>{comentario.mensaje}</p>
+                      <p>
+                        Escrito por:
+                        <span
+                          css={css`
+                            font-weight: bold;
+                          `}
+                        >
+                          {" "}
+                          {comentario.usuarioNombre}
+                        </span>
+                      </p>
+                      {esCreador(comentario.usuarioId) && (
+                        <CreadorProducto>Es Creador</CreadorProducto>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
-          </aside>
-        </ContenedorProducto>
-      </div>
+
+            <aside>
+              <Boton target="_blank" bgColor="true" href={url}>
+                Visitar URL
+              </Boton>
+
+              <div
+                css={css`
+                  margin-top: 5rem;
+                `}
+              >
+                <p
+                  css={css`
+                    text-align: center;
+                  `}
+                >
+                  {votos} Votos
+                </p>
+
+                {usuario && <Boton onClick={votarProducto}>Votar</Boton>}
+              </div>
+            </aside>
+          </ContenedorProducto>
+
+          {puedeBorrar() && (
+            <Boton onClick={eliminarProducto}>Eliminar Producto</Boton>
+          )}
+        </div>
+      )}
     </Layout>
   );
 };

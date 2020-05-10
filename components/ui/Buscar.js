@@ -27,7 +27,7 @@ const InputSubmit = styled.button`
 `;
 
 const Buscar = () => {
-  /*const [busqueda, guardarBusqueda] = useState("");
+  const [busqueda, guardarBusqueda] = useState("");
 
   const buscarProducto = (e) => {
     e.preventDefault();
@@ -39,15 +39,20 @@ const Buscar = () => {
       pathname: "/buscar",
       query: { q: busqueda },
     });
-  };*/
+  };
 
   return (
     <form
       css={css`
         position: relative;
       `}
+      onSubmit={buscarProducto}
     >
-      <InputText type="text" placeholder="Buscar Productos" />
+      <InputText
+        type="text"
+        placeholder="Buscar Productos"
+        onChange={(e) => guardarBusqueda(e.target.value)}
+      />
 
       <InputSubmit type="submit">Buscar</InputSubmit>
     </form>
